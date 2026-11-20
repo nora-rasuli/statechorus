@@ -1,0 +1,921 @@
+{
+  "evidenceSchemaVersion": "1.0.0",
+  "app": {
+    "name": "StateChorus",
+    "version": "1.0.0",
+    "commit": "local-uncommitted"
+  },
+  "contract": {
+    "id": "CONTRACT-AI-TURN-001",
+    "version": "1.0.0",
+    "hash": "fnv1a64:0598e74b9ba4bbfb"
+  },
+  "fixture": {
+    "id": "FIX-DEMO-BROKEN",
+    "version": "1.0.0",
+    "hash": "fnv1a64:d592f1b28e93f093"
+  },
+  "scenario": {
+    "id": "SCN-RELEASE-001",
+    "version": "1.0.0",
+    "releaseId": "2026.11.19-rc3",
+    "hash": "fnv1a64:a90c5636a810a465"
+  },
+  "provider": {
+    "name": "BrowserDomProvider",
+    "version": "1.1.0",
+    "authority": "local_browser_observable",
+    "capabilities": [
+      "fixture_phase",
+      "event_order",
+      "dom_focus",
+      "keyboard_reachability",
+      "transcript_identity_content",
+      "live_region_mutation"
+    ],
+    "unsupported": [
+      "native_speech",
+      "disabled_user_experience",
+      "wcag_conformance"
+    ]
+  },
+  "environment": {
+    "browserName": "Chrome",
+    "browserVersion": "159.0.8154.6",
+    "os": "MacIntel",
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "reducedMotion": false
+  },
+  "run": {
+    "runId": "run-fix-demo-broken-001",
+    "attemptId": "attempt-001",
+    "startedAt": "2026-11-20T00:07:50.743Z",
+    "completedAt": "2026-11-20T00:07:51.957Z",
+    "wallClockMetadataOnly": true
+  },
+  "rawEvents": [
+    {
+      "type": "harness_event",
+      "state": "submitted",
+      "name": "run_started",
+      "cause": "user",
+      "sequence": 1,
+      "virtualMs": 100,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "submitted",
+      "from": "idle",
+      "to": "submitted",
+      "sequence": 2,
+      "virtualMs": 200,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "thinking",
+      "from": "submitted",
+      "to": "thinking",
+      "sequence": 3,
+      "virtualMs": 300,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "thinking",
+      "semanticKey": "thinking",
+      "text": "Reviewing the synthetic request.",
+      "politeness": "polite",
+      "sequence": 4,
+      "virtualMs": 400,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "tool_call",
+      "from": "thinking",
+      "to": "tool_call",
+      "sequence": 5,
+      "virtualMs": 500,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "tool_call",
+      "semanticKey": "tool",
+      "text": "Synthetic deployment log access proposed.",
+      "politeness": "polite",
+      "sequence": 6,
+      "virtualMs": 600,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "approval",
+      "from": "tool_call",
+      "to": "approval",
+      "sequence": 7,
+      "virtualMs": 700,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "approval",
+      "semanticKey": "approval",
+      "text": "Approval is required to continue.",
+      "politeness": "polite",
+      "sequence": 8,
+      "virtualMs": 800,
+      "source": "browser_dom"
+    },
+    {
+      "type": "control_observation",
+      "state": "approval",
+      "controlId": "approval-control",
+      "present": true,
+      "keyboardReachable": true,
+      "sequence": 9,
+      "virtualMs": 900,
+      "source": "browser_dom"
+    },
+    {
+      "type": "focus_change",
+      "state": "approval",
+      "fromElement": "run-control",
+      "toElement": "synthetic-transcript",
+      "cause": "system",
+      "sequence": 10,
+      "virtualMs": 1000,
+      "source": "browser_dom"
+    },
+    {
+      "type": "focus_change",
+      "state": "approval",
+      "fromElement": "synthetic-transcript",
+      "toElement": "approval-control",
+      "cause": "user",
+      "sequence": 11,
+      "virtualMs": 1100,
+      "source": "browser_dom"
+    },
+    {
+      "type": "harness_event",
+      "state": "approval",
+      "name": "approval_activated",
+      "cause": "user",
+      "sequence": 12,
+      "virtualMs": 1200,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "streaming",
+      "from": "approval",
+      "to": "streaming",
+      "sequence": 13,
+      "virtualMs": 1300,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The",
+      "politeness": "polite",
+      "sequence": 14,
+      "virtualMs": 1400,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:aca88b0e93936fc0",
+      "stable": false,
+      "sequence": 15,
+      "virtualMs": 1500,
+      "source": "browser_dom"
+    },
+    {
+      "type": "focus_change",
+      "state": "streaming",
+      "fromElement": "approval-control",
+      "toElement": "synthetic-composer",
+      "cause": "user",
+      "sequence": 16,
+      "virtualMs": 1600,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The synthetic",
+      "politeness": "polite",
+      "sequence": 17,
+      "virtualMs": 1700,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:023d874b0ba22cfe",
+      "stable": false,
+      "sequence": 18,
+      "virtualMs": 1800,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The synthetic fixture",
+      "politeness": "polite",
+      "sequence": 19,
+      "virtualMs": 1900,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:0407988468391338",
+      "stable": false,
+      "sequence": 20,
+      "virtualMs": 2000,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The synthetic fixture completed",
+      "politeness": "polite",
+      "sequence": 21,
+      "virtualMs": 2100,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:0407988468391338",
+      "stable": false,
+      "sequence": 22,
+      "virtualMs": 2200,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The synthetic fixture completed its checks",
+      "politeness": "polite",
+      "sequence": 23,
+      "virtualMs": 2300,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:0407988468391338",
+      "stable": false,
+      "sequence": 24,
+      "virtualMs": 2400,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "stalled",
+      "from": "streaming",
+      "to": "stalled",
+      "sequence": 25,
+      "virtualMs": 2500,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "stalled",
+      "semanticKey": "stalled",
+      "text": "Still working on the synthetic fixture.",
+      "politeness": "polite",
+      "sequence": 26,
+      "virtualMs": 2600,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "stalled",
+      "semanticKey": "stalled",
+      "text": "Still working on the synthetic fixture.",
+      "politeness": "polite",
+      "sequence": 27,
+      "virtualMs": 2700,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "stalled",
+      "semanticKey": "stalled",
+      "text": "Still working on the synthetic fixture.",
+      "politeness": "polite",
+      "sequence": 28,
+      "virtualMs": 2800,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "stalled",
+      "semanticKey": "stalled",
+      "text": "Still working on the synthetic fixture.",
+      "politeness": "polite",
+      "sequence": 29,
+      "virtualMs": 2900,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "complete",
+      "from": "stalled",
+      "to": "complete",
+      "sequence": 30,
+      "virtualMs": 3000,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "complete",
+      "semanticKey": "complete",
+      "text": "Synthetic fixture replay complete.",
+      "politeness": "polite",
+      "sequence": 31,
+      "virtualMs": 3100,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "complete",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:cb894244bfd73f35",
+      "stable": true,
+      "sequence": 32,
+      "virtualMs": 3200,
+      "source": "browser_dom"
+    },
+    {
+      "type": "status_snapshot",
+      "state": "complete",
+      "activeSemanticKeys": [
+        "complete"
+      ],
+      "sequence": 33,
+      "virtualMs": 3300,
+      "source": "browser_dom"
+    },
+    {
+      "type": "harness_event",
+      "state": "complete",
+      "name": "run_completed",
+      "cause": "system",
+      "sequence": 34,
+      "virtualMs": 3400,
+      "source": "browser_dom"
+    }
+  ],
+  "normalizedEvents": [
+    {
+      "type": "harness_event",
+      "state": "submitted",
+      "name": "run_started",
+      "cause": "user",
+      "sequence": 1,
+      "virtualMs": 100,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "submitted",
+      "from": "idle",
+      "to": "submitted",
+      "sequence": 2,
+      "virtualMs": 200,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "thinking",
+      "from": "submitted",
+      "to": "thinking",
+      "sequence": 3,
+      "virtualMs": 300,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "thinking",
+      "semanticKey": "thinking",
+      "text": "Reviewing the synthetic request.",
+      "politeness": "polite",
+      "sequence": 4,
+      "virtualMs": 400,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "tool_call",
+      "from": "thinking",
+      "to": "tool_call",
+      "sequence": 5,
+      "virtualMs": 500,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "tool_call",
+      "semanticKey": "tool",
+      "text": "Synthetic deployment log access proposed.",
+      "politeness": "polite",
+      "sequence": 6,
+      "virtualMs": 600,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "approval",
+      "from": "tool_call",
+      "to": "approval",
+      "sequence": 7,
+      "virtualMs": 700,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "approval",
+      "semanticKey": "approval",
+      "text": "Approval is required to continue.",
+      "politeness": "polite",
+      "sequence": 8,
+      "virtualMs": 800,
+      "source": "browser_dom"
+    },
+    {
+      "type": "control_observation",
+      "state": "approval",
+      "controlId": "approval-control",
+      "present": true,
+      "keyboardReachable": true,
+      "sequence": 9,
+      "virtualMs": 900,
+      "source": "browser_dom"
+    },
+    {
+      "type": "focus_change",
+      "state": "approval",
+      "fromElement": "run-control",
+      "toElement": "synthetic-transcript",
+      "cause": "system",
+      "sequence": 10,
+      "virtualMs": 1000,
+      "source": "browser_dom"
+    },
+    {
+      "type": "focus_change",
+      "state": "approval",
+      "fromElement": "synthetic-transcript",
+      "toElement": "approval-control",
+      "cause": "user",
+      "sequence": 11,
+      "virtualMs": 1100,
+      "source": "browser_dom"
+    },
+    {
+      "type": "harness_event",
+      "state": "approval",
+      "name": "approval_activated",
+      "cause": "user",
+      "sequence": 12,
+      "virtualMs": 1200,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "streaming",
+      "from": "approval",
+      "to": "streaming",
+      "sequence": 13,
+      "virtualMs": 1300,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The",
+      "politeness": "polite",
+      "sequence": 14,
+      "virtualMs": 1400,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:aca88b0e93936fc0",
+      "stable": false,
+      "sequence": 15,
+      "virtualMs": 1500,
+      "source": "browser_dom"
+    },
+    {
+      "type": "focus_change",
+      "state": "streaming",
+      "fromElement": "approval-control",
+      "toElement": "synthetic-composer",
+      "cause": "user",
+      "sequence": 16,
+      "virtualMs": 1600,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The synthetic",
+      "politeness": "polite",
+      "sequence": 17,
+      "virtualMs": 1700,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:023d874b0ba22cfe",
+      "stable": false,
+      "sequence": 18,
+      "virtualMs": 1800,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The synthetic fixture",
+      "politeness": "polite",
+      "sequence": 19,
+      "virtualMs": 1900,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:0407988468391338",
+      "stable": false,
+      "sequence": 20,
+      "virtualMs": 2000,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The synthetic fixture completed",
+      "politeness": "polite",
+      "sequence": 21,
+      "virtualMs": 2100,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:0407988468391338",
+      "stable": false,
+      "sequence": 22,
+      "virtualMs": 2200,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "streaming",
+      "semanticKey": "streaming",
+      "text": "The synthetic fixture completed its checks",
+      "politeness": "polite",
+      "sequence": 23,
+      "virtualMs": 2300,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "streaming",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:0407988468391338",
+      "stable": false,
+      "sequence": 24,
+      "virtualMs": 2400,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "stalled",
+      "from": "streaming",
+      "to": "stalled",
+      "sequence": 25,
+      "virtualMs": 2500,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "stalled",
+      "semanticKey": "stalled",
+      "text": "Still working on the synthetic fixture.",
+      "politeness": "polite",
+      "sequence": 26,
+      "virtualMs": 2600,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "stalled",
+      "semanticKey": "stalled",
+      "text": "Still working on the synthetic fixture.",
+      "politeness": "polite",
+      "sequence": 27,
+      "virtualMs": 2700,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "stalled",
+      "semanticKey": "stalled",
+      "text": "Still working on the synthetic fixture.",
+      "politeness": "polite",
+      "sequence": 28,
+      "virtualMs": 2800,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "stalled",
+      "semanticKey": "stalled",
+      "text": "Still working on the synthetic fixture.",
+      "politeness": "polite",
+      "sequence": 29,
+      "virtualMs": 2900,
+      "source": "browser_dom"
+    },
+    {
+      "type": "state_transition",
+      "state": "complete",
+      "from": "stalled",
+      "to": "complete",
+      "sequence": 30,
+      "virtualMs": 3000,
+      "source": "browser_dom"
+    },
+    {
+      "type": "live_region_mutation",
+      "state": "complete",
+      "semanticKey": "complete",
+      "text": "Synthetic fixture replay complete.",
+      "politeness": "polite",
+      "sequence": 31,
+      "virtualMs": 3100,
+      "source": "browser_dom"
+    },
+    {
+      "type": "transcript_observation",
+      "state": "complete",
+      "nodeId": "msg-assistant-001",
+      "present": true,
+      "textChecksum": "fnv1a64:cb894244bfd73f35",
+      "stable": true,
+      "sequence": 32,
+      "virtualMs": 3200,
+      "source": "browser_dom"
+    },
+    {
+      "type": "status_snapshot",
+      "state": "complete",
+      "activeSemanticKeys": [
+        "complete"
+      ],
+      "sequence": 33,
+      "virtualMs": 3300,
+      "source": "browser_dom"
+    },
+    {
+      "type": "harness_event",
+      "state": "complete",
+      "name": "run_completed",
+      "cause": "system",
+      "sequence": 34,
+      "virtualMs": 3400,
+      "source": "browser_dom"
+    }
+  ],
+  "expectedEpisodes": [
+    {
+      "state": "submitted",
+      "label": "Request submitted",
+      "summary": "One stable request-start episode."
+    },
+    {
+      "state": "thinking",
+      "label": "Work started",
+      "summary": "One bounded work-start status."
+    },
+    {
+      "state": "tool_call",
+      "label": "Tool proposed",
+      "summary": "One synthetic tool proposal."
+    },
+    {
+      "state": "approval",
+      "label": "Approval required",
+      "summary": "A keyboard-reachable decision without system focus movement."
+    },
+    {
+      "state": "streaming",
+      "label": "Response streaming",
+      "summary": "Stable assistant node with at most one status mutation."
+    },
+    {
+      "state": "stalled",
+      "label": "Progress stalled",
+      "summary": "One semantic stalled episode."
+    },
+    {
+      "state": "complete",
+      "label": "Turn complete",
+      "summary": "Stable transcript, completion status, and no stale stall."
+    }
+  ],
+  "actualEpisodes": [
+    {
+      "state": "submitted",
+      "label": "Request submitted",
+      "startSequence": 1,
+      "endSequence": 2,
+      "eventCount": 2,
+      "eventSequences": [
+        1,
+        2
+      ],
+      "summary": "2 observable events; 0 status mutations."
+    },
+    {
+      "state": "thinking",
+      "label": "Work started",
+      "startSequence": 3,
+      "endSequence": 4,
+      "eventCount": 2,
+      "eventSequences": [
+        3,
+        4
+      ],
+      "summary": "2 observable events; 1 status mutation."
+    },
+    {
+      "state": "tool_call",
+      "label": "Tool proposed",
+      "startSequence": 5,
+      "endSequence": 6,
+      "eventCount": 2,
+      "eventSequences": [
+        5,
+        6
+      ],
+      "summary": "2 observable events; 1 status mutation."
+    },
+    {
+      "state": "approval",
+      "label": "Approval required",
+      "startSequence": 7,
+      "endSequence": 12,
+      "eventCount": 6,
+      "eventSequences": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "summary": "6 observable events; 1 status mutation."
+    },
+    {
+      "state": "streaming",
+      "label": "Response streaming",
+      "startSequence": 13,
+      "endSequence": 24,
+      "eventCount": 12,
+      "eventSequences": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "summary": "12 observable events; 5 status mutations."
+    },
+    {
+      "state": "stalled",
+      "label": "Progress stalled",
+      "startSequence": 25,
+      "endSequence": 29,
+      "eventCount": 5,
+      "eventSequences": [
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "summary": "5 observable events; 4 status mutations."
+    },
+    {
+      "state": "complete",
+      "label": "Turn complete",
+      "startSequence": 30,
+      "endSequence": 34,
+      "eventCount": 5,
+      "eventSequences": [
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      "summary": "5 observable events; 1 status mutation."
+    }
+  ],
+  "findings": [
+    {
+      "key": "episode-budget-exceeded",
+      "severity": "high",
+      "rule": "At most one streaming status mutation is observable.",
+      "state": "streaming",
+      "summary": "Streaming emitted more than one live-region mutation; the local episode budget was exceeded.",
+      "evidenceSequences": [
+        14,
+        17,
+        19,
+        21,
+        23
+      ]
+    },
+    {
+      "key": "duplicate-stall-episode",
+      "severity": "high",
+      "rule": "One semantic stalled episode is observable per pause.",
+      "state": "stalled",
+      "summary": "The equivalent stalled status was emitted more than once.",
+      "evidenceSequences": [
+        26,
+        27,
+        28,
+        29
+      ]
+    },
+    {
+      "key": "unexpected-focus-change",
+      "severity": "high",
+      "rule": "System state changes do not move DOM focus without user action.",
+      "state": "approval",
+      "summary": "A system-caused DOM focus change occurred when approval appeared.",
+      "evidenceSequences": [
+        10
+      ]
+    }
+  ],
+  "result": "contract_violation",
+  "resultCopy": "3 local contract violations found.",
+  "nativeVerificationRequirement": "Local browser evidence does not represent native screen-reader output, disabled-user experience, or WCAG conformance. Native assistive-technology review remains required.",
+  "integrityHash": "fnv1a64:3f442bf324ca2111"
+}

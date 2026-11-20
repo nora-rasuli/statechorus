@@ -1,0 +1,9 @@
+{
+  "capturedAt": "2026-11-20T00:08:11.103Z",
+  "productSourceExternalReferences": [],
+  "forbiddenRuntimePatterns": [],
+  "syntheticFixtureSource": "src/fixtures/corpus.ts",
+  "frozenResearchSource": "research.md",
+  "result": "pass",
+  "limitation": "This review verifies bundled product source and runtime boundaries; it does not revalidate external research claims."
+}
