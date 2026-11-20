@@ -1,0 +1,60 @@
+{
+  "name": "statechorus",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://statechorus.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nora-rasuli/statechorus.git"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "vite",
+    "format": "prettier --check 'src/**/*.{ts,tsx,css}' 'tests/**/*.{ts,tsx}' 'scripts/**/*.ts' '*.{json,js,ts,html,yml}' '.github/**/*.yml'",
+    "format:write": "prettier --write 'src/**/*.{ts,tsx,css}' 'tests/**/*.{ts,tsx}' 'scripts/**/*.ts' '*.{json,js,ts,html,yml}' '.github/**/*.yml'",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit tests/component",
+    "test:fixtures": "vitest run tests/fixtures && npm run build && playwright test tests/e2e/corpus.spec.ts && node --import tsx scripts/generate-evidence.ts",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test:e2e": "playwright test",
+    "licenses": "node --import tsx scripts/license-inventory.ts",
+    "claims": "node --import tsx scripts/claim-review.ts",
+    "contrast": "node --import tsx scripts/contrast-audit.ts",
+    "provenance": "node --import tsx scripts/provenance-review.ts",
+    "verify": "npm run format && npm run lint && npm run typecheck && npm run test && npm run test:fixtures && npm run build && npm run test:e2e && npm run contrast && npm run provenance && npm run licenses && npm run claims"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.1",
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.65.1",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.1.0",
+    "@testing-library/user-event": "14.5.2",
+    "@types/node": "26.6.6",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "6.3.0",
+    "eslint": "9.39.5",
+    "eslint-plugin-react-hooks": "5.1.0",
+    "eslint-plugin-react-refresh": "0.4.16",
+    "globals": "15.13.0",
+    "jsdom": "25.0.1",
+    "prettier": "3.4.2",
+    "tsx": "4.23.15",
+    "typescript": "5.7.2",
+    "typescript-eslint": "8.73.0",
+    "vite": "8.3.8",
+    "vitest": "4.1.12"
+  }
+}

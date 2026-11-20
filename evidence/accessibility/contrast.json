@@ -1,0 +1,56 @@
+{
+  "capturedAt": "2026-11-20T00:08:10.884Z",
+  "method": "WCAG relative-luminance arithmetic against frozen CSS tokens",
+  "scope": "Declared normal text and focus-indicator token pairs; not a conformance claim",
+  "checks": [
+    {
+      "use": "body text",
+      "foreground": "#17231f",
+      "background": "#fcfbf7",
+      "threshold": 4.5,
+      "measuredRatio": 15.64,
+      "result": "pass"
+    },
+    {
+      "use": "muted text",
+      "foreground": "#58635e",
+      "background": "#fcfbf7",
+      "threshold": 4.5,
+      "measuredRatio": 6.03,
+      "result": "pass"
+    },
+    {
+      "use": "accent text",
+      "foreground": "#034437",
+      "background": "#fcfbf7",
+      "threshold": 4.5,
+      "measuredRatio": 10.75,
+      "result": "pass"
+    },
+    {
+      "use": "primary button text",
+      "foreground": "#ffffff",
+      "background": "#075d4b",
+      "threshold": 4.5,
+      "measuredRatio": 7.85,
+      "result": "pass"
+    },
+    {
+      "use": "warning text",
+      "foreground": "#8b3a20",
+      "background": "#f7e8df",
+      "threshold": 4.5,
+      "measuredRatio": 6.45,
+      "result": "pass"
+    },
+    {
+      "use": "focus indicator",
+      "foreground": "#8c4b00",
+      "background": "#fcfbf7",
+      "threshold": 3,
+      "measuredRatio": 6.5,
+      "result": "pass"
+    }
+  ],
+  "result": "pass"
+}

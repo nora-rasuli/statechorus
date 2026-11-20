@@ -1,0 +1,8 @@
+{
+  "capturedAt": "2026-11-20T00:08:01.000Z",
+  "tool": "@axe-core/playwright 4.10.1",
+  "setupViolations": [],
+  "reviewViolations": [],
+  "seriousOrCritical": 0,
+  "nativeAssistiveTechnologyRun": false
+}
