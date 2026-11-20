@@ -1,9 +1,10 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { AiState } from "./domain/contract";
+import type { ImportedTrace } from "./domain/imported-trace";
 import type { ReviewerAnnotation } from "./engine/evidence";
 import { createEvidence } from "./engine/evidence";
 import type { Evaluation, EvaluationOptions } from "./engine/evaluate";
-import { evaluateRun } from "./engine/evaluate";
+import { evaluateImportedRun, evaluateRun } from "./engine/evaluate";
 import { ReplayPanel } from "./features/replay/ReplayPanel";
 import {
   statusMutationsForState,
@@ -11,6 +12,7 @@ import {
 } from "./features/replay/replay-behavior";
 import { ReviewPanel } from "./features/review/ReviewPanel";
 import { SetupPanel } from "./features/setup/SetupPanel";
+import { TraceImportPanel } from "./features/setup/TraceImportPanel";
 import { FIXTURES, isFixtureId, type FixtureId } from "./fixtures/corpus";
 import { BrowserDomProvider } from "./providers/browser-dom";
 
@@ -34,6 +36,14 @@ interface RenderedStatus {
 }
 
 const provider = new BrowserDomProvider();
+const captureProvider = Object.freeze({
+  name: "StateChorusPlaywrightCapture",
+  version: "1.0.0",
+  authority: "local_browser_observable" as const,
+  capabilities: provider.identity.capabilities,
+  unsupported: provider.identity.unsupported,
+});
+const APP_VERSION = "1.1.0";
 const PRESENTATION_TICK_MS = 70;
 
 function initialFixture(): { id: FixtureId; error: string | null } {
@@ -109,6 +119,9 @@ export default function App() {
   const [stateIndex, setStateIndex] = useState(-1);
   const [observationStep, setObservationStep] = useState(0);
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
+  const [importedTrace, setImportedTrace] = useState<ImportedTrace | null>(
+    null,
+  );
   const [annotation, setAnnotation] = useState<
     ReviewerAnnotation | undefined
   >();
@@ -202,10 +215,12 @@ export default function App() {
     setObservationStep(0);
     setEvaluation(null);
     setAnnotation(undefined);
+    setImportedTrace(null);
     updateUrl(id);
   }
 
   function beginRun() {
+    setImportedTrace(null);
     provider.start(document.body, "run-control");
     provider.recordHarnessEvent("run_started", "submitted", "user");
     setAttempt((value) => value + 1);
@@ -244,6 +259,7 @@ export default function App() {
     setObservationStep(0);
     setEvaluation(null);
     setAnnotation(undefined);
+    setImportedTrace(null);
     window.requestAnimationFrame(() => runButtonRef.current?.focus());
   }
 
@@ -253,13 +269,32 @@ export default function App() {
     window.setTimeout(beginRun, 0);
   }
 
+  function importTrace(trace: ImportedTrace) {
+    provider.stop();
+    const nextEvaluation = evaluateImportedRun(trace.events);
+    setImportedTrace(trace);
+    setEvaluation(nextEvaluation);
+    setAttempt((value) => value + 1);
+    setStartedAt(trace.capturedAt);
+    setCompletedAt(new Date().toISOString());
+    setAnnotation(undefined);
+    setRunStatus("complete");
+    setStateIndex(-1);
+    setObservationStep(0);
+    window.requestAnimationFrame(() => resultHeadingRef.current?.focus());
+  }
+
   const evidence = useMemo(() => {
     if (!evaluation) return null;
+    const analysisEnvironment = browserEnvironment();
+    const sourceId = importedTrace?.traceId ?? fixture.id;
     return createEvidence({
-      fixture,
-      provider: provider.identity,
-      environment: browserEnvironment(),
-      runId: `run-${fixture.id.toLowerCase()}-${attempt.toString().padStart(3, "0")}`,
+      ...(importedTrace ? { trace: importedTrace } : { fixture }),
+      provider: importedTrace ? captureProvider : provider.identity,
+      environment:
+        importedTrace?.source.captureEnvironment ?? analysisEnvironment,
+      analysisEnvironment,
+      runId: `run-${sourceId.toLowerCase()}-${attempt.toString().padStart(3, "0")}`,
       attemptId: `attempt-${attempt.toString().padStart(3, "0")}`,
       startedAt: startedAt || new Date(0).toISOString(),
       completedAt: completedAt || new Date().toISOString(),
@@ -271,17 +306,25 @@ export default function App() {
       resultCopy: evaluation.resultCopy,
       annotation,
     });
-  }, [annotation, attempt, completedAt, evaluation, fixture, startedAt]);
+  }, [
+    annotation,
+    attempt,
+    completedAt,
+    evaluation,
+    fixture,
+    importedTrace,
+    startedAt,
+  ]);
 
   const statusMessage =
     runStatus === "complete"
-      ? (evaluation?.resultCopy ?? "Replay complete.")
+      ? (evaluation?.resultCopy ?? "Evaluation complete.")
       : runStatus === "interrupted"
         ? "Replay interrupted. Partial evidence retained."
         : runStatus === "running" || runStatus === "awaiting_approval"
           ? (renderedStatus?.mutation.text ??
             `Synthetic replay state: ${currentState?.replace("_", " ") ?? "starting"}.`)
-          : "Ready to run a synthetic fixture.";
+          : "Ready to import a real trace or try a sample.";
 
   const observedStatus =
     runStatus === "running" || runStatus === "awaiting_approval"
@@ -300,7 +343,9 @@ export default function App() {
             <small>AI interface accessibility contract testing</small>
           </span>
         </a>
-        <span className="build-badge">Package 1.0 · local/static</span>
+        <span className="build-badge">
+          Version {APP_VERSION} · local analysis
+        </span>
       </header>
 
       <div
@@ -325,8 +370,8 @@ export default function App() {
           <p className="eyebrow">Release evidence workbench</p>
           <h1 id="page-title">Follow the state. Keep the authority honest.</h1>
           <p className="hero-copy">
-            Replay a versioned AI-turn contract, inspect captured local DOM
-            observations, and carry complete evidence into native review.
+            Capture a real AI interaction in Playwright, evaluate observable
+            state and focus behavior locally, and export reviewable evidence.
           </p>
           <div
             className="authority-key"
@@ -366,6 +411,13 @@ export default function App() {
           </div>
         ) : null}
 
+        <TraceImportPanel
+          disabled={
+            runStatus === "running" || runStatus === "awaiting_approval"
+          }
+          onImport={importTrace}
+        />
+
         <SetupPanel
           fixture={fixture}
           onSelect={selectFixture}
@@ -376,26 +428,41 @@ export default function App() {
           }
         />
 
-        <ReplayPanel
-          fixture={fixture}
-          currentState={currentState}
-          visitedStates={visitedStates}
-          observationStep={observationStep}
-          runStatus={runStatus}
-          onApprove={approve}
-          onStop={stopRun}
-          composerRef={composerRef}
-          transcriptRef={transcriptRef}
-        />
+        {importedTrace ? null : (
+          <ReplayPanel
+            fixture={fixture}
+            currentState={currentState}
+            visitedStates={visitedStates}
+            observationStep={observationStep}
+            runStatus={runStatus}
+            onApprove={approve}
+            onStop={stopRun}
+            composerRef={composerRef}
+            transcriptRef={transcriptRef}
+          />
+        )}
 
         {evaluation && evidence ? (
           <ReviewPanel
-            fixture={fixture}
+            fixture={importedTrace ? undefined : fixture}
+            source={
+              importedTrace
+                ? {
+                    id: importedTrace.traceId,
+                    version: importedTrace.schemaVersion,
+                    kind: "user_trace",
+                  }
+                : {
+                    id: fixture.id,
+                    version: fixture.version,
+                    kind: "sample_fixture",
+                  }
+            }
             evaluation={evaluation}
             evidence={evidence}
             resultHeadingRef={resultHeadingRef}
             onReviewFocus={() => resultHeadingRef.current?.focus()}
-            onRerunEquivalent={runEquivalent}
+            onRerunEquivalent={importedTrace ? undefined : runEquivalent}
             onReset={reset}
             onAnnotation={setAnnotation}
           />
@@ -404,8 +471,8 @@ export default function App() {
 
       <footer className="site-footer">
         <p>
-          Bundled synthetic fixtures only. No uploads, telemetry,
-          authentication, arbitrary URLs, or remote model calls.
+          Real trace imports are processed in your browser and are not uploaded.
+          The bundled scenario is an optional sample.
         </p>
         <p>
           Native assistive-technology and disabled-user testing: not run in this

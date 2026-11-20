@@ -28,7 +28,6 @@
 - `../screenshots/desktop/keyboard-focus.png`
 - `../screenshots/desktop/keyboard-rerun-focus.png`
 - `../screenshots/mobile/fixed-review-360x800.png`
-- `../tests/stage-04-a11y-01-repair.md`
 - `../../tests/e2e/statechorus.spec.ts`
 
 ## Authority limitation

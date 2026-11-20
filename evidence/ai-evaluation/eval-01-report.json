@@ -1,6 +1,6 @@
 {
   "reportVersion": "1.1.0",
-  "generatedAt": "2026-11-20T00:08:10.426Z",
+  "generatedAt": "2026-11-20T03:26:01.590Z",
   "wallClockMetadataOnly": true,
   "captureOrigin": "BrowserDomProvider queries the rendered replay surface",
   "threshold": {

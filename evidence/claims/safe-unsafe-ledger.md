@@ -1,25 +1,18 @@
-# Safe and unsupported claim ledger
+# Safe / Unsafe Claim Ledger
 
-**Reviewed:** 2026-11-19
-**Requirement:** `CLAIM-01`
+**Reviewed candidate:** StateChorus functional release 1.1 · 2026-11-19
 
-## Safe with retained evidence
+| Safe wording | Unsafe or unsupported wording | Reason |
+| --- | --- | --- |
+| “Capture a real AI-interface trace with the Playwright helper.” | “Connect StateChorus to any live website.” | The user must instrument and exercise a local/staging interface. |
+| “Imported traces are processed locally in the browser.” | “Your data can never leave your device.” | The static app has no upload path, but the user's browser, host, and capture environment remain outside its control. |
+| “Checks browser-observable state, focus, transcript, approval, and live-region signals.” | “Tests screen readers.” | No native assistive-technology driver or speech output is used. |
+| “Incomplete or incoherent traces fail as invalid runs.” | “StateChorus validates every possible AI interaction.” | The validator implements one explicit versioned contract. |
+| “A clean local result still requires native verification.” | “Accessible,” “WCAG compliant,” or “safe to ship.” | Local DOM evidence cannot establish those outcomes. |
+| “42 Vitest, 24 corpus attempts, and 19 Playwright checks passed on the dated candidate.” | “Production-proven” or “bug-free.” | Local deterministic checks do not establish production reliability. |
+| “User-trace exports preserve separate capture and analysis provenance.” | “Forensic chain of custody.” | Hashes provide reproducibility/tamper evidence, not authenticated custody. |
+| “The optional bundled sample demonstrates broken and corrected behavior.” | “The sample came from a customer or production incident.” | The sample is synthetic. |
+| “Independent product designed and engineered by Nora Rasuli.” | “Validated by customers” or “commercially proven.” | No customer/adoption/revenue evidence exists. |
 
-- StateChorus is a self-directed concept using bundled synthetic fixtures.
-- The implementation models twelve typed AI interaction states and executes the exact seven-state demo path.
-- `BrowserDomProvider@1.1.0` compares deterministic event order, DOM focus, keyboard reachability, transcript identity/content, and live-region mutations queried from the rendered synthetic replay surface; it has no fixture input.
-- The eight-fixture corpus completed 24 browser attempts, detected 7/7 seeded rendered failures, produced 0 fixed-control false failures, and emitted identical normalized outputs across three executions per fixture.
-- The measured local test, build, timing, bundle, axe, Lighthouse, contrast-token, reflow, reduced-motion, console, network, provenance, audit, and license results are those retained in this evidence directory.
-- Unsupported native behavior is routed to native verification.
-
-## Not supported
-
-- Native speech, NVDA, VoiceOver, JAWS, TalkBack, screen-reader success, or native/local correlation.
-- Disabled-user usability, efficiency, or experience.
-- WCAG conformance, certification, compliance, legal safety, or a safe release gate.
-- Prevention of inaccessible releases.
-- Customer interviews, validation, adoption, pilots, payment, demand, ROI, time savings, business impact, or commercial viability.
-- Model accuracy, quality, latency, or cost; no model is used.
-- An independent validation pass for the repaired candidate; fresh Stage 03 verification remains required.
-- Public production performance, reliability, compatibility, or support beyond the exact recorded environments.
-- Trademark, package, repository, or domain ownership/clearance.
+For public claim IDs, evidence paths, measurements, and limitations, use
+`claim-ledger.md` as the controlling record.

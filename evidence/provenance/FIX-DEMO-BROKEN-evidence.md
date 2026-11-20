@@ -3,10 +3,13 @@
 - Result: `contract_violation`
 - Result label: 3 local contract violations found.
 - Contract: `CONTRACT-AI-TURN-001@1.0.0` (fnv1a64:0598e74b9ba4bbfb)
-- Fixture: `FIX-DEMO-BROKEN@1.0.0` (fnv1a64:d592f1b28e93f093)
+- Input: Sample fixture — `FIX-DEMO-BROKEN@1.0.0` (fnv1a64:d592f1b28e93f093)
+- Source: Guided broken fixture
 - Provider: BrowserDomProvider@1.1.0 — local_browser_observable
-- Browser: Chrome 159.0.8154.6
-- Viewport: 1280×800; reduced motion: false
+- Capture browser: Chrome 159.0.8154.6
+- Capture viewport: 1280×800; reduced motion: false
+- Analysis browser: Chrome 159.0.8154.6
+- Analysis viewport: 1280×800; reduced motion: false
 - Run / attempt: `run-fix-demo-broken-001` / `attempt-001`
 
 ## Findings
@@ -21,4 +24,4 @@ Local browser evidence does not represent native screen-reader output, disabled-
 
 ## Integrity
 
-`fnv1a64:3f442bf324ca2111`
+`fnv1a64:a5595b0f3177f687`

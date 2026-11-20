@@ -78,7 +78,7 @@ test("QA-01 / EVAL-01 evaluates three deterministic browser-captured runs per fi
     for (let index = 0; index < 3; index += 1) {
       const artifact = await runFixture(page, id);
       expect(validateEvidenceIntegrity(artifact)).toEqual([]);
-      expect(artifact.fixture.hash).toBe(fixture.hash);
+      expect(artifact.fixture?.hash).toBe(fixture.hash);
       expect(
         artifact.rawEvents.every((event) => event.source === "browser_dom"),
       ).toBe(true);

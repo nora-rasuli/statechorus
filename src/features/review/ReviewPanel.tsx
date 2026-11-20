@@ -15,12 +15,17 @@ import { NATIVE_LIMITATION } from "../../domain/events";
 import { ResultNotice } from "./ResultNotice";
 
 interface ReviewPanelProps {
-  readonly fixture: FixtureDefinition;
+  readonly fixture?: FixtureDefinition;
+  readonly source: {
+    readonly id: string;
+    readonly version: string;
+    readonly kind: "sample_fixture" | "user_trace";
+  };
   readonly evaluation: Evaluation;
   readonly evidence: EvidenceArtifact;
   readonly resultHeadingRef: React.RefObject<HTMLHeadingElement>;
   readonly onReviewFocus: () => void;
-  readonly onRerunEquivalent: (id: FixtureId) => void;
+  readonly onRerunEquivalent?: (id: FixtureId) => void;
   readonly onReset: () => void;
   readonly onAnnotation: (annotation: ReviewerAnnotation | undefined) => void;
 }
@@ -36,6 +41,7 @@ function downloadFile(filename: string, contents: string, type: string) {
 
 export function ReviewPanel({
   fixture,
+  source,
   evaluation,
   evidence,
   resultHeadingRef,
@@ -80,7 +86,7 @@ export function ReviewPanel({
           </h2>
           <p>
             <code>
-              {fixture.id}@{fixture.version}
+              {source.id}@{source.version}
             </code>{" "}
             · {evidence.integrityHash}
           </p>
@@ -102,7 +108,7 @@ export function ReviewPanel({
       </div>
 
       <div className="review-actions">
-        {fixture.id === "FIX-DEMO-BROKEN" ? (
+        {fixture?.id === "FIX-DEMO-BROKEN" && onRerunEquivalent ? (
           <button
             className="button primary"
             type="button"
@@ -110,7 +116,7 @@ export function ReviewPanel({
           >
             Run fixed fixture
           </button>
-        ) : (
+        ) : fixture && onRerunEquivalent ? (
           <button
             className="button secondary"
             type="button"
@@ -118,7 +124,7 @@ export function ReviewPanel({
           >
             Compare broken fixture
           </button>
-        )}
+        ) : null}
         <button className="button quiet" type="button" onClick={onReset}>
           Reset review
         </button>
@@ -214,11 +220,15 @@ export function ReviewPanel({
             </dd>
           </div>
           <div>
-            <dt>Fixture</dt>
+            <dt>Input</dt>
             <dd>
-              {evidence.fixture.id}@{evidence.fixture.version}
+              {evidence.input.id}@{evidence.input.version}
               <br />
-              <code>{evidence.fixture.hash}</code>
+              <code>{evidence.input.hash}</code>
+              <br />
+              {source.kind === "user_trace"
+                ? "User-supplied trace"
+                : "Bundled sample"}
             </dd>
           </div>
           <div>
@@ -230,13 +240,23 @@ export function ReviewPanel({
             </dd>
           </div>
           <div>
-            <dt>Environment</dt>
+            <dt>Capture environment</dt>
             <dd>
               {evidence.environment.browserName}{" "}
               {evidence.environment.browserVersion}
               <br />
               {evidence.environment.viewport.width}×
               {evidence.environment.viewport.height}
+            </dd>
+          </div>
+          <div>
+            <dt>Analysis environment</dt>
+            <dd>
+              {evidence.analysisEnvironment.browserName}{" "}
+              {evidence.analysisEnvironment.browserVersion}
+              <br />
+              {evidence.analysisEnvironment.viewport.width}×
+              {evidence.analysisEnvironment.viewport.height}
             </dd>
           </div>
           <div>
@@ -355,7 +375,7 @@ export function ReviewPanel({
             type="button"
             onClick={() =>
               downloadFile(
-                `${fixture.id}-evidence.json`,
+                `${source.id}-evidence.json`,
                 json,
                 "application/json",
               )
@@ -368,7 +388,7 @@ export function ReviewPanel({
             type="button"
             onClick={() =>
               downloadFile(
-                `${fixture.id}-evidence.md`,
+                `${source.id}-evidence.md`,
                 markdown,
                 "text/markdown",
               )

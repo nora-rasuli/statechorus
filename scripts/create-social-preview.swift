@@ -2,7 +2,7 @@ import AppKit
 import Foundation
 
 guard CommandLine.arguments.count == 4 else {
-  fputs("Usage: create-social-preview.swift DISCLOSURE RESULT OUTPUT\n", stderr)
+  fputs("Usage: create-social-preview.swift PRODUCT_INTRO RESULT OUTPUT\n", stderr)
   exit(64)
 }
 
@@ -17,15 +17,15 @@ func loadCGImage(_ path: String) -> CGImage {
   return cgImage
 }
 
-let disclosure = loadCGImage(CommandLine.arguments[1])
+let productIntro = loadCGImage(CommandLine.arguments[1])
 let result = loadCGImage(CommandLine.arguments[2])
 
-guard disclosure.width == 1280, disclosure.height == 160 else {
-  fputs("Disclosure component must be 1280x160.\n", stderr)
+guard productIntro.width == 1280, productIntro.height == 470 else {
+  fputs("Product intro component must be 1280x470.\n", stderr)
   exit(65)
 }
-guard result.width == 1280, result.height == 480 else {
-  fputs("Result component must be 1280x480.\n", stderr)
+guard result.width == 1280, result.height == 170 else {
+  fputs("Result component must be 1280x170.\n", stderr)
   exit(65)
 }
 
@@ -50,8 +50,8 @@ else {
 context.setFillColor(NSColor(calibratedRed: 0.97, green: 0.96, blue: 0.93, alpha: 1).cgColor)
 context.fill(CGRect(x: 0, y: 0, width: width, height: height))
 context.interpolationQuality = .none
-context.draw(result, in: CGRect(x: 0, y: 0, width: 1280, height: 480))
-context.draw(disclosure, in: CGRect(x: 0, y: 480, width: 1280, height: 160))
+context.draw(result, in: CGRect(x: 0, y: 0, width: 1280, height: 170))
+context.draw(productIntro, in: CGRect(x: 0, y: 170, width: 1280, height: 470))
 
 guard let output = context.makeImage() else {
   fputs("Unable to render social preview.\n", stderr)

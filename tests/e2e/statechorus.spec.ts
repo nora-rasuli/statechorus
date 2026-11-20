@@ -1,9 +1,37 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { fixedObservedEvents } from "../helpers/observed-events";
+import {
+  installStateChorusCapture,
+  saveStateChorusTrace,
+} from "../../public/statechorus-playwright-capture";
 
 const evidenceRoot = resolve(process.cwd(), "evidence");
+
+function freshUserTrace(traceId = `fresh-checkout-${Date.now()}`) {
+  return {
+    schemaVersion: "1.1.0",
+    traceId,
+    capturedAt: new Date().toISOString(),
+    contract: { id: "CONTRACT-AI-TURN-001", version: "1.0.0" },
+    source: {
+      appName: "Checkout Assistant staging",
+      url: "https://staging.example.test/assistant",
+      environment: "staging",
+      captureTool: "statechorus-playwright-capture@1.0.0",
+      captureEnvironment: {
+        browserName: "Chromium",
+        browserVersion: "test",
+        os: "test",
+        viewport: { width: 1280, height: 800 },
+        reducedMotion: false,
+      },
+    },
+    events: fixedObservedEvents(),
+  };
+}
 
 test.beforeAll(async () => {
   await Promise.all([
@@ -53,6 +81,35 @@ async function retainBrowserEvidence(
   );
 }
 
+async function retainEvidenceScreenshot(
+  page: import("@playwright/test").Page,
+  options: { readonly path: string; readonly fullPage: boolean },
+) {
+  if (process.env.UPDATE_EVIDENCE_SCREENSHOTS !== "1") return;
+  await page.screenshot(options);
+}
+
+async function stabilizePresentationText(
+  page: import("@playwright/test").Page,
+) {
+  await page.evaluate(() => {
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+    );
+    let node = walker.nextNode();
+    while (node) {
+      node.nodeValue = (node.nodeValue ?? "")
+        .replace(/fnv1a64:[0-9a-f]{16}/g, "fnv1a64:verified-record")
+        .replace(
+          /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g,
+          "2026-11-19T00:00:00.000Z",
+        );
+      node = walker.nextNode();
+    }
+  });
+}
+
 test("P-02 P-03 P-04 broken-to-fixed golden path and evidence export", async ({
   page,
 }) => {
@@ -63,7 +120,7 @@ test("P-02 P-03 P-04 broken-to-fixed golden path and evidence export", async ({
   const started = performance.now();
   await page.goto("/demo?fixture=FIX-DEMO-BROKEN");
   await expect(page.getByTestId("disclosure")).toBeVisible();
-  await page.screenshot({
+  await retainEvidenceScreenshot(page, {
     path: resolve(evidenceRoot, "screenshots/desktop/setup.png"),
     fullPage: true,
   });
@@ -82,7 +139,8 @@ test("P-02 P-03 P-04 broken-to-fixed golden path and evidence export", async ({
     page.getByRole("heading", { name: "unexpected-focus-change" }),
   ).toBeVisible();
   await retainBrowserEvidence(page, "FIX-DEMO-BROKEN");
-  await page.screenshot({
+  await stabilizePresentationText(page);
+  await retainEvidenceScreenshot(page, {
     path: resolve(evidenceRoot, "screenshots/desktop/broken-review.png"),
     fullPage: true,
   });
@@ -100,7 +158,8 @@ test("P-02 P-03 P-04 broken-to-fixed golden path and evidence export", async ({
     "Local observable checks passed — native verification required.",
   );
   await retainBrowserEvidence(page, "FIX-DEMO-FIXED");
-  await page.screenshot({
+  await stabilizePresentationText(page);
+  await retainEvidenceScreenshot(page, {
     path: resolve(evidenceRoot, "screenshots/desktop/fixed-review.png"),
     fullPage: true,
   });
@@ -118,6 +177,183 @@ test("P-02 P-03 P-04 broken-to-fixed golden path and evidence export", async ({
   );
 });
 
+test("FUNC-01 captures a transient approval, imports it, and exports useful evidence", async ({
+  page,
+}) => {
+  const tracePath = resolve(evidenceRoot, "tests/helper-functional-trace.json");
+  await installStateChorusCapture(page);
+  const harness = `<!doctype html><html><body data-statechorus-state="idle">
+    <div id="status" aria-live="polite" data-statechorus-semantic-key="thinking"></div>
+    <main id="app"></main>
+  </body></html>`;
+  await page.goto(`data:text/html,${encodeURIComponent(harness)}`);
+
+  async function setState(state: string, semanticKey: string, text: string) {
+    await page.evaluate(
+      ([nextState, key, copy]) => {
+        document.body.dataset.statechorusState = nextState;
+        const status = document.querySelector<HTMLElement>("#status")!;
+        status.dataset.statechorusSemanticKey = key;
+        status.textContent = copy;
+      },
+      [state, semanticKey, text],
+    );
+    await page.waitForTimeout(20);
+  }
+
+  await page.evaluate(() => {
+    document.body.dataset.statechorusState = "submitted";
+  });
+  await page.waitForTimeout(20);
+  await setState("thinking", "thinking", "Reviewing the request.");
+  await setState("tool_call", "tool", "Tool access proposed.");
+  await page.evaluate(() => {
+    document.body.dataset.statechorusState = "approval";
+    const status = document.querySelector<HTMLElement>("#status")!;
+    status.dataset.statechorusSemanticKey = "approval";
+    status.textContent = "Approval is required.";
+    const button = document.createElement("button");
+    button.textContent = "Approve tool access";
+    button.dataset.statechorusApproval = "";
+    button.addEventListener("click", () => {
+      document.body.dataset.statechorusState = "streaming";
+      const status = document.querySelector<HTMLElement>("#status")!;
+      status.dataset.statechorusSemanticKey = "streaming";
+      status.textContent = "Response is updating.";
+      button.remove();
+    });
+    document.querySelector("#app")!.append(button);
+  });
+  await page.waitForTimeout(20);
+  await page.keyboard.press("Tab");
+  await expect(
+    page.getByRole("button", { name: "Approve tool access" }),
+  ).toBeFocused();
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(20);
+  await setState("stalled", "stalled", "The response paused.");
+  await page.evaluate(() => {
+    document.body.dataset.statechorusState = "complete";
+    const status = document.querySelector<HTMLElement>("#status")!;
+    status.dataset.statechorusSemanticKey = "complete";
+    status.textContent = "Response complete.";
+    const transcript = document.createElement("p");
+    transcript.dataset.statechorusTranscript = "assistant";
+    transcript.textContent = "The order is ready for review.";
+    document.querySelector("#app")!.append(transcript);
+  });
+  await page.waitForTimeout(20);
+  await saveStateChorusTrace(
+    page,
+    {
+      traceId: "captured-checkout-assistant",
+      appName: "Checkout Assistant test interface",
+      url: "http://127.0.0.1/test-interface",
+      environment: "local",
+    },
+    tracePath,
+  );
+
+  await page.goto("/");
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "checkout-trace.json",
+    mimeType: "application/json",
+    buffer: await readFile(tracePath),
+  });
+
+  await expect(
+    page.getByRole("heading", { name: "Review local observable evidence" }),
+  ).toBeVisible();
+  await expect(page.getByText("User-supplied trace")).toBeVisible();
+  await expect(
+    page.locator("[data-result='local_observable_pass_native_required']"),
+  ).toBeVisible();
+  const preview = page.getByLabel("json evidence preview");
+  await expect(preview).toContainText('"kind": "user_trace"');
+  await expect(preview).not.toContainText('"fixture"');
+  await expect(preview).toContainText('"id": "captured-checkout-assistant"');
+  await expect(preview).toContainText("Checkout Assistant test interface");
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download JSON" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe(
+    "captured-checkout-assistant-evidence.json",
+  );
+});
+
+test("FUNC-01 rejects malformed traces without running sample data", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "bad-trace.json",
+    mimeType: "application/json",
+    buffer: Buffer.from('{"schemaVersion":"0.1","events":[]}'),
+  });
+  await expect(page.getByRole("alert")).toContainText(
+    "Trace could not be imported",
+  );
+  await expect(page.getByRole("alert")).toContainText(
+    "Nothing was evaluated or replaced with sample data",
+  );
+  await expect(
+    page.getByRole("heading", { name: "Review local observable evidence" }),
+  ).toHaveCount(0);
+
+  const missingTransition = JSON.parse(
+    JSON.stringify(freshUserTrace("missing-transition")),
+  ) as { events: Array<Record<string, unknown>> };
+  const transition = missingTransition.events.find(
+    (event) => event.type === "state_transition",
+  )!;
+  delete transition.from;
+  delete transition.to;
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "missing-transition.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(missingTransition)),
+  });
+  await expect(page.getByRole("alert")).toContainText(
+    "transitions need supported from and to states",
+  );
+
+  const noTrajectory = JSON.parse(
+    JSON.stringify(freshUserTrace("no-trajectory")),
+  ) as { events: Array<Record<string, unknown>> };
+  noTrajectory.events = noTrajectory.events
+    .filter((event) => event.type !== "state_transition")
+    .map((event, index) => ({ ...event, sequence: index + 1 }));
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "no-trajectory.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(noTrajectory)),
+  });
+  await expect(page.locator("[data-result='invalid_run']")).toContainText(
+    "trace is incomplete or incoherent",
+  );
+  await expect(
+    page.locator("[data-result='local_observable_pass_native_required']"),
+  ).toHaveCount(0);
+});
+
+test("A11Y-01 real-input control has a visible keyboard focus proxy", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
+  const input = page.getByLabel("Import trace JSON");
+  await expect(input).toBeFocused();
+  const outline = await page.locator(".file-control").evaluate((element) => ({
+    style: getComputedStyle(element).outlineStyle,
+    width: getComputedStyle(element).outlineWidth,
+  }));
+  expect(outline).toEqual({ style: "solid", width: "3px" });
+});
+
 test("A11Y-01 keyboard and focus rules on corrected fixture", async ({
   page,
 }) => {
@@ -132,7 +368,8 @@ test("A11Y-01 keyboard and focus rules on corrected fixture", async ({
   await expect(approval).toBeVisible();
   await page.keyboard.press("Tab");
   await expect(approval).toBeFocused();
-  await page.screenshot({
+  await approval.scrollIntoViewIfNeeded();
+  await retainEvidenceScreenshot(page, {
     path: resolve(evidenceRoot, "screenshots/desktop/keyboard-focus.png"),
     fullPage: false,
   });
@@ -165,7 +402,8 @@ test("A11Y-01 keyboard focus remains deliberate through broken-to-fixed rerun", 
   });
   await expect(approval).toBeVisible();
   await expect(stableRun).toBeFocused();
-  await page.screenshot({
+  await stabilizePresentationText(page);
+  await retainEvidenceScreenshot(page, {
     path: resolve(evidenceRoot, "screenshots/desktop/keyboard-rerun-focus.png"),
     fullPage: true,
   });
@@ -233,6 +471,51 @@ test("A11Y-02 axe finds no issues in setup and review", async ({ page }) => {
   );
 });
 
+test("A11Y-02 mobile real-input state reflows without an inaccessible scroll region", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/");
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "mobile-user-trace.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(freshUserTrace("mobile-user-trace"))),
+  });
+  await expect(
+    page.getByRole("heading", { name: "Review local observable evidence" }),
+  ).toBeVisible();
+  const audit = await new AxeBuilder({ page: page as never }).analyze();
+  expect(
+    audit.violations.filter((violation) =>
+      ["serious", "critical"].includes(violation.impact ?? ""),
+    ),
+  ).toEqual([]);
+  const contractLayout = await page
+    .locator(".contract-strip")
+    .evaluate((element) => ({
+      overflowX: getComputedStyle(element).overflowX,
+      scrollWidth: element.scrollWidth,
+      clientWidth: element.clientWidth,
+      tabIndex: (element as HTMLElement).tabIndex,
+    }));
+  expect(contractLayout.tabIndex).toBe(0);
+  const contract = page.locator(".contract-strip");
+  await contract.focus();
+  await expect(contract).toBeFocused();
+  const focusStyle = await contract.evaluate((element) => ({
+    style: getComputedStyle(element).outlineStyle,
+    width: getComputedStyle(element).outlineWidth,
+  }));
+  expect(focusStyle).toEqual({ style: "solid", width: "3px" });
+  if (contractLayout.scrollWidth > contractLayout.clientWidth + 1) {
+    expect(contractLayout.overflowX).toBe("auto");
+    await page.keyboard.press("ArrowRight");
+    expect(
+      await contract.evaluate((element) => element.scrollLeft),
+    ).toBeGreaterThan(0);
+  }
+});
+
 for (const viewport of [
   { name: "mobile-360x800", width: 360, height: 800 },
   { name: "tablet-768x1024", width: 768, height: 1024 },
@@ -252,7 +535,8 @@ for (const viewport of [
     );
     expect(overflow).toBeLessThanOrEqual(1);
     if (viewport.width === 360) {
-      await page.screenshot({
+      await stabilizePresentationText(page);
+      await retainEvidenceScreenshot(page, {
         path: resolve(
           evidenceRoot,
           "screenshots/mobile/fixed-review-360x800.png",
@@ -305,6 +589,12 @@ test("PRIV-01 no runtime request after static assets load", async ({
   await page.goto("/demo?fixture=FIX-DEMO-FIXED");
   const loadRequestCount = requests.length;
   await startAndApprove(page, "fixed");
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "privacy-trace.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(freshUserTrace("privacy-trace"))),
+  });
+  await expect(page.getByText("User-supplied trace")).toBeVisible();
   expect(requests).toHaveLength(loadRequestCount);
   expect(
     requests.every((url) => url.startsWith("http://127.0.0.1:4273/")),
@@ -320,7 +610,7 @@ test("QA-02 invalid fixture and interruption preserve distinct recovery", async 
 }) => {
   await page.goto("/demo?fixture=NOT-A-FIXTURE");
   await expect(page.getByRole("alert")).toContainText("Invalid fixture");
-  await page.screenshot({
+  await retainEvidenceScreenshot(page, {
     path: resolve(
       evidenceRoot,
       "screenshots/failure-states/invalid-fixture.png",
@@ -335,7 +625,7 @@ test("QA-02 invalid fixture and interruption preserve distinct recovery", async 
   await expect(page.locator("[data-result='interrupted']")).toContainText(
     "partial evidence retained without a verdict",
   );
-  await page.screenshot({
+  await retainEvidenceScreenshot(page, {
     path: resolve(evidenceRoot, "screenshots/failure-states/interrupted.png"),
     fullPage: false,
   });
@@ -360,7 +650,8 @@ for (const injectedResult of ["invalid_run", "inconclusive"] as const) {
         ? "reset and rerun"
         : "native verification remains required",
     );
-    await page.screenshot({
+    await notice.scrollIntoViewIfNeeded();
+    await retainEvidenceScreenshot(page, {
       path: resolve(
         evidenceRoot,
         `screenshots/failure-states/${injectedResult.replace("_", "-")}.png`,

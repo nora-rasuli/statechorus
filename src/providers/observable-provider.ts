@@ -11,8 +11,8 @@ export type ObservableCapability =
   | "live_region_mutation";
 
 export interface ProviderIdentity {
-  readonly name: "BrowserDomProvider";
-  readonly version: "1.1.0";
+  readonly name: string;
+  readonly version: string;
   readonly authority: "local_browser_observable";
   readonly capabilities: readonly ObservableCapability[];
   readonly unsupported: readonly [

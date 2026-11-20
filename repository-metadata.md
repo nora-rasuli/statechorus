@@ -6,9 +6,8 @@ StateChorus portfolio release.
 ## GitHub fields
 
 - **Repository slug:** `statechorus`
-- **Description (130 characters):** Replay AI-interface state contracts, diagnose
-  browser-observable regressions, and export evidence for native accessibility
-  review.
+- **Description:** Capture real AI-interface traces, diagnose observable state
+  regressions, and export evidence for accessibility review.
 - **Topics:** `accessibility`, `ai-interfaces`, `react`, `typescript`,
   `playwright`, `testing`, `quality-assurance`, `human-in-the-loop`, `provenance`,
   `vite`
@@ -30,26 +29,26 @@ is not legal advice.
 - **Headline:** StateChorus
 - **Descriptor:** AI interface accessibility contract testing
 - **Supporting line:** Follow the state. Keep the authority honest.
-- **Preview copy:** Replay a versioned AI-turn contract, inspect local DOM evidence,
-  and route unsupported conclusions to native review.
+- **Preview copy:** Capture a real AI turn, inspect state and focus evidence, and
+  route unsupported conclusions to native review.
 - **Visual direction:** Use `presentation-assets/social-preview.png`, the 1280×640
-  exact-pixel composite derived from the synthetic-disclosure strip and fixed-review
-  result/authority panel. Keep both the synthetic disclosure and exact
+  exact-pixel composite that shows the StateChorus product identity and the exact
+  local-pass/native-verification boundary. Keep the name, purpose, and
   native-required result legible;
   do not use the broken state as a success image or add “WCAG,” “screen-reader
   passed,” customer logos, adoption numbers, or certification marks.
 
 ## Short portfolio copy
 
-**Card:** A release-evidence workbench that replays AI-interface state contracts,
-diagnoses local DOM regressions, and preserves the route to native accessibility
-review.
+**Card:** A release-evidence workbench that captures real AI-interface traces,
+diagnoses state and focus regressions, and exports reviewable evidence.
 
 **Role:** Product design and frontend engineering
 
 **Timeline:** One-week independent build · 2026
-**Disclosure:** Self-directed concept using bundled synthetic fixtures; native
-assistive-technology and disabled-user testing were not performed.
+**Product boundary:** Real user-supplied traces are evaluated locally. A bundled
+sample is optional; native assistive-technology and disabled-user testing remain
+separate review steps.
 
 ## Naming boundary
 

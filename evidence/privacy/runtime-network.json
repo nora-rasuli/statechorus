@@ -1,0 +1,11 @@
+{
+  "capturedAt": "2026-11-20T03:25:50.664Z",
+  "initialStaticRequests": [
+    "http://127.0.0.1:4273/demo?fixture=FIX-DEMO-FIXED",
+    "http://127.0.0.1:4273/assets/index-DRCSdqGq.js",
+    "http://127.0.0.1:4273/assets/index-CBtTOan-.css"
+  ],
+  "runtimeRequestsAfterLoad": 0,
+  "externalRequests": [],
+  "result": "pass"
+}

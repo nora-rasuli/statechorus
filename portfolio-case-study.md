@@ -1,247 +1,165 @@
 # StateChorus — Portfolio Case Study
 
-## Card copy
+## Project card
 
-- **One-line description:** Replay an AI-interface state contract, diagnose local
-  regressions, and route the remaining questions to native accessibility review.
-- **Role:** Product design and frontend engineering
-- **Timeline:** One-week independent build · November 2026
-- **Stack:** React, TypeScript, Vite, Vitest, Playwright, axe-core
-- **Project type:** Self-directed product concept using synthetic fixtures
-- **Links:** [Live demo](https://statechorus-eta.vercel.app/demo?fixture=FIX-DEMO-BROKEN)
-  · [Source](https://github.com/nora-rasuli/statechorus)
+- **What it is:** A release-evidence workbench for complex AI-interface states.
+- **Who it is for:** Accessibility QA engineers and frontend platform teams.
+- **Role:** Product design and frontend engineering.
+- **Timeline:** One-week independent build · November 2026.
+- **Stack:** React, TypeScript, Vite, Vitest, Playwright, axe-core.
+- **Links:** [Current public baseline](https://statechorus-eta.vercel.app/) ·
+  [Source](https://github.com/nora-rasuli/statechorus).
 
-## A release-evidence workbench for AI interface states
+This case study documents functional release candidate 1.1. The public URL and
+repository remain on the earlier sample-led release until Stage 05 promotion; the
+exact deployed candidate is verified separately in Stage 06.
 
-Streaming text is only one part of an AI interface. A realistic turn can submit,
-think, propose a tool, wait for approval, stream, stall, retry, and finish while
-focus and transcript state change around it. StateChorus gives an accessibility QA
-engineer a repeatable way to review that lifecycle: replay a versioned contract,
-compare expected and browser-observable episodes, inspect the exact mismatch, and
-export evidence for the native review that still has to happen.
+## The problem
 
-The project uses a fictional release and bundled synthetic interaction fixtures.
-It has no customer, adoption, revenue, ROI, or production-impact evidence. Local
-DOM evidence is deliberately not presented as native screen-reader output,
-disabled-user experience, or WCAG conformance.
+An AI interface does not move directly from question to answer. It may submit,
+think, call a tool, ask for approval, stream, stall, recover, and finish while
+focus, live regions, and the transcript all change. A static scan sees snapshots;
+a release reviewer needs the sequence.
 
-| Role                                    | Timeline                                  | Stack                               | Status                                       |
-| --------------------------------------- | ----------------------------------------- | ----------------------------------- | -------------------------------------------- |
-| Product design and frontend engineering | One-week independent build, November 2026 | React, TypeScript, Vite, Playwright | Public portfolio release |
+The practical question is: **when an AI workflow changes, which observable state
+promise changed, what evidence supports that conclusion, and what still requires
+native assistive-technology or human review?**
 
-## The painful moment
+The primary user story is:
 
-The target user is an accessibility QA engineer reviewing a shared web AI component
-just before release. The change touches streaming updates, a tool-approval prompt,
-and a stalled state. Static rules can inspect the final DOM, and native review can
-evaluate real assistive-technology behavior, but the team still needs a durable
-account of the interaction lifecycle: which state promise failed, which observable
-events support that conclusion, and which questions remain outside local authority?
+> As an accessibility QA engineer reviewing an AI-interface release, I want to
+> capture one complete interaction and compare its observable state, focus, and
+> transcript behavior with a versioned contract so I can diagnose a regression and
+> hand off trustworthy evidence.
 
-The core user story is:
+## The product
 
-> As an accessibility QA engineer reviewing an AI-interface change, I need to
-> replay a versioned semantic contract and inspect the exact observable mismatch so
-> that I can reject a local regression or send a well-scoped case to authoritative
-> native review.
+StateChorus turns that job into one continuous workflow:
 
-Formal user research and customer outreach were outside the authorized build scope.
-The persona, buying hypothesis, and workflow were derived from public issue reports,
-browser regressions, specialist practice, and adjacent tooling; they remain
-assumptions to validate with practitioners.
+1. Download a small Playwright capture helper.
+2. Add explicit `data-statechorus-*` markers to a local or staging interface.
+3. Exercise a complete AI turn, including approval when relevant.
+4. Import the captured JSON into StateChorus.
+5. Review expected and observed episodes, findings, and raw sequence pointers.
+6. Export integrity-checked JSON or Markdown for the release record.
 
-## The product approach
+The app is static and account-free. Imported traces stay in browser memory and are
+not uploaded by StateChorus. A bundled broken/fixed sample is available for
+orientation, but it is not the product's primary input.
 
-The demo is one continuous release review, not a dashboard of disconnected checks.
+![StateChorus entry screen with the real-trace workflow before the optional sample](presentation-assets/setup-overview.png)
 
-| Step                        | User intent                                      | Interface response                                                                               | Why it is designed this way                                            |
-| --------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| 1. Establish authority      | Understand what the tool can and cannot conclude | The first screen names local, native, and human authority and marks the scenario synthetic       | The limitation is part of the task, not a footnote after a pass state  |
-| 2. Reproduce the regression | Run the exact release-change lifecycle           | A seven-state replay pauses for a real keyboard-reachable approval action                        | The approval moment makes focus ownership and state order observable   |
-| 3. Diagnose                 | Find the broken promise and evidence             | Three findings link human explanations to expected rules and raw sequence numbers                | Reviewers can move from summary to evidence without reading test code  |
-| 4. Compare the correction   | Re-run the equivalent scenario                   | The corrected fixture uses the same contract and ends with zero local findings                   | The comparison changes behavior, not the problem definition            |
-| 5. Preserve the review      | Carry the result into the next authority         | JSON and Markdown include raw and normalized events, versions, environment, findings, and hashes | A release review needs portable lineage, not a screenshot-only verdict |
+## Product decisions
 
-### Broken-to-fixed demonstration
+### Make real input the first action
 
-![Broken review with the three named local contract findings](presentation-assets/broken-findings.png)
+The first version led with a polished synthetic replay. It demonstrated the idea,
+but it did not solve a user's job. The release was reworked around a downloadable
+capture adapter and strict local import. The sample moved below the real workflow
+and malformed files fail visibly without silently falling back to canned data.
 
-The broken fixture produces three high-severity local findings:
+### Fail closed on incomplete evidence
 
-- `episode-budget-exceeded`: five streaming status mutations exceed the contract’s
-  single-mutation budget.
-- `duplicate-stall-episode`: the equivalent stalled status appears four times.
-- `unexpected-focus-change`: the system moves DOM focus when approval appears.
+A valid trace must contain the exact complete contract path:
 
-![Corrected review retaining the native-verification requirement](presentation-assets/fixed-result.png)
+`idle → submitted → thinking → tool_call → approval → streaming → stalled → complete`
 
-The corrected equivalent produces no local contract finding, but its result remains
-“Local observable checks passed — native verification required.” The interface
-never offers an accessible, compliant, safe, or screen-reader-pass result.
+StateChorus checks transition order, transition/event state consistency, required
+signals, and terminal completion before it evaluates findings. Removing,
+reordering, or contradicting any required part produces `invalid_run`; it can never
+produce a local pass.
 
-## The hardest decision: choosing an honest evidence boundary
+### Keep capture and analysis provenance separate
 
-The main engineering risk was not rendering the timeline. It was making sure the
-timeline could not say more than the product had actually observed.
+The capture helper records the browser, operating system, viewport, reduced-motion
+setting, source label, and trace identity from the interface under test. The web
+app separately records the analysis environment. User-trace exports have
+trace-native identity; only bundled samples carry fixture lineage. Both the source
+trace and final artifact have recomputable hashes.
 
-One tempting design was to let the fixture definition emit the raw events directly.
-That was deterministic and easy to test, but it would allow fixture metadata to
-manufacture the evidence that supposedly proved rendered behavior. Another option
-was to simulate a speech layer, which would look closer to a screen-reader test but
-would blur browser mutations with native output.
+### Keep the authority boundary visible
 
-I chose a narrower provider contract. Fixture flags affect the rendered React
-surface. `BrowserDomProvider@1.1.0` accepts only a DOM root and captures state,
-status revision/text, active-element changes, approval-control reachability,
-transcript identity/content, and retained statuses. The evaluator never reads the
-fixture’s expected findings to create observations. It consumes captured events,
-normalizes them, reduces them into episodes, and evaluates contract invariants.
+StateChorus can evaluate browser-observable state, focus, control reachability,
+transcript content, and live-region mutations. It cannot report what a screen
+reader spoke, how a disabled user experienced the task, or whether a release
+conforms to WCAG. A clean local result therefore says **“native verification
+required,”** not “accessible” or “safe to ship.”
 
-The tradeoff is explicit: StateChorus can detect and explain only the signals in
-its declared local scope. Native speech and lived usability require another
-authority. That constraint is also what makes the evidence credible.
-
-## State and evidence architecture
+## Architecture
 
 ```text
-versioned contract + synthetic fixture
-                ↓
-     deterministic React replay
-                ↓
-  BrowserDomProvider captures DOM facts
-                ↓
- normalize → group episodes → evaluate
-                ↓
- expected/observed review + findings
-                ↓
- immutable JSON/Markdown evidence
-                ↓
- trained native accessibility review
+local/staging AI interface
+        ↓ Playwright capture helper
+user-controlled trace JSON
+        ↓ schema + semantic validation
+normalizer → episode reducer → invariant evaluator
+        ↓
+review UI + integrity-checked JSON/Markdown
+        ↓
+native assistive-technology and human review
+
+optional sample → same evaluator and review UI
 ```
 
-The contract models twelve states; the polished demo exercises the seven-state
-path `submitted → thinking → tool_call → approval → streaming → stalled →
-complete`. Invalid fixture, invalid run, inconclusive, interrupted, contract
-violation, and local-pass/native-required remain separate results. A virtual clock
-and stable sequence numbers make comparable fixture output deterministic; wall
-clock time is lineage only.
+The evaluator, capture schema, import validator, episode reducer, UI, and evidence
+serializer are typed boundaries. There is no server, database, authentication,
+telemetry SDK, model call, or arbitrary URL runner.
 
-## Independent verification found what the happy path missed
+## What the interface reveals
 
-The validation process was intentionally separate from implementation. It changed
-the product twice.
+The optional broken sample makes three failure classes easy to inspect: excessive
+streaming mutations, repeated stalled episodes, and an unexpected focus move. The
+corrected equivalent uses the same contract and ends with no local finding while
+preserving the native-review requirement.
 
-### 1. The “browser-observable” evidence was not yet browser-observed
+![Broken sample review showing three named local contract findings](presentation-assets/broken-findings.png)
 
-The first Stage 03 review traced the provider data flow instead of accepting the
-green tests. It found that several seeded failures were created from fixture flags
-and labeled `browser_dom` even though the provider never queried the rendered
-interface. The same review found non-reproducible contract hashing, browser recovery
-gaps for invalid/inconclusive results, and a nested complementary landmark issue.
+![Corrected sample review preserving the native-verification boundary](presentation-assets/fixed-result.png)
 
-The correction moved every defect into rendered behavior; made the provider accept
-only a DOM root; separated raw from normalized events; added hash validation and a
-flag-only negative regression; exposed fail-closed degraded states in browser tests;
-and corrected the landmark. A fresh validator then reproduced all 24 corpus
-attempts before returning `PASS`.
+## Verification and iteration
 
-### 2. The complete correction loop dropped keyboard focus
+Independent review materially changed the product:
 
-The independent release audit did not stop at the setup-to-review path. It activated
-**Run fixed fixture** from the broken review with the keyboard and observed that
-the focused button unmounted, leaving focus on `BODY` when approval appeared. That
-was release-blocking in a product whose central promise includes focus contracts.
+- Evidence collection was decoupled from fixture-authored expectations.
+- A keyboard-focus regression in the corrected rerun was repaired.
+- The real-input path was added after the initial sample-only release was judged
+  non-functional.
+- Transition-free and semantically incomplete traces were made fail-closed.
+- Fixture-shaped identity was removed from user-trace exports.
 
-The bounded repair transfers focus to the persistent canonical Run control before
-the review action unmounts. One ordinary Tab then reaches the approval control;
-approval returns focus to the synthetic composer; completion does not move focus;
-**Review result** moves focus only on request; reset returns it to Run. Fresh Stage
-03 and Stage 04 reviewers reproduced the complete sequence in ordinary Chrome and
-in a separate reduced-motion flow.
+The current candidate passed a fresh cross-context functional verification using a
+verifier-owned AI-like interface—not a bundled sample. The verifier captured a
+real transient approval at 1440×900 with reduced motion, imported at 390×844 in a
+separate browser context, downloaded JSON and Markdown, recomputed both hashes,
+and confirmed six incomplete or incoherent variants failed visibly.
 
-This loop is the strongest outcome of the project: independent evidence did not
-just confirm the implementation; it exposed two credibility failures and forced
-the product to match its own authority and focus contracts.
+The complete release gate passed with:
 
-## Quality as a product feature
+- 42/42 Vitest checks;
+- 24/24 browser-captured sample-corpus attempts;
+- 19/19 Playwright checks, including a mobile real-input axe and keyboard case;
+- zero serious or critical automated accessibility violations in audited states;
+- provenance, privacy, contrast, license, claim, build, and strict TypeScript
+  checks; and
+- a 194.69 kB JavaScript build (60.96 kB gzip) plus 13.44 kB CSS (3.65 kB gzip).
 
-### Deterministic evaluation
+These are dated local verification results, not production reliability, WCAG
+conformance, or disabled-user validation.
 
-The frozen corpus contains seven single-defect fixtures and one corrected control.
-On 2026-11-19, the independent audit ran each three times in rendered Chromium:
-seven of seven seeded failures were detected, the fixed control produced zero false
-findings, and every fixture produced one comparable output hash across all three
-runs. This is evidence about a synthetic declared-local corpus, not model accuracy
-or production defect-prevention.
+## Outcome
 
-### Accessibility
+StateChorus now has a useful primary path: teams can bring evidence from their own
+interface, receive a strict and explainable local result, and carry a verifiable
+artifact into the next review authority. The work demonstrates product framing,
+accessible interaction design, typed frontend architecture, deterministic testing,
+provenance design, failure-mode thinking, and an audit-driven release process.
 
-The complete keyboard and focus path, responsive layouts at 360/768/1280, 200% and
-400%-equivalent reflow, selected contrast tokens, reduced motion, semantic
-structure, and axe-core 4.10.1 were checked. The final audit reported zero axe
-violations in the two tested states. Native screen-reader testing and testing with
-disabled users were not performed; automated results are not WCAG certification.
+## Next product experiments
 
-### Performance and privacy
-
-The independent Stage 04 release gate completed in 53.78 seconds on the recorded
-macOS 15.7.4 / Node 20.19.5 environment. The production build measured 183.80 kB
-JavaScript raw / 57.96 kB gzip and 12.42 kB CSS raw / 3.48 kB gzip. A local runtime
-capture observed three same-origin static-load requests and zero post-load or
-external requests. These are dated local profiles, not production SLAs or public
-reliability evidence.
-
-### Verification coverage
-
-The release gate combined 25 Vitest checks, 24 rendered-browser corpus attempts,
-15 Playwright checks, build/type/lint/format checks, axe-core, responsive/reflow,
-reduced motion, privacy/network, contrast-token, provenance, license, and claim
-review. The GitHub Actions definition mirrors the local gate, but it has no hosted
-run until publication.
-
-## Scope choices
-
-I deliberately excluded a backend, accounts, hosted run history, production
-conversation ingestion, remote models, automatic remediation, and a native
-NVDA/VoiceOver/JAWS provider. Those additions would expand privacy and authority
-before the core contract and reviewer workflow had practitioner validation.
-
-The MVP is intentionally one complete journey: reproduce, diagnose, compare,
-export, and route. It does not claim customer validation or production use.
-
-## Verified outcome
-
-| Result                                                                                            | Type                             | Method/source                                              |
-| ------------------------------------------------------------------------------------------------- | -------------------------------- | ---------------------------------------------------------- |
-| Twelve-state typed contract; exact seven-state executable demo                                    | Verified artifact                | Frozen package 1.0, source, unit and browser checks        |
-| 7/7 seeded failures, zero fixed false findings, one comparable hash per fixture across three runs | Measured synthetic-corpus result | 24 Chromium attempts, independent audit, 2026-11-19        |
-| Complete keyboard rerun retains a canonical focus target                                          | Measured interaction result      | Ordinary-Chrome Stage 03 and Stage 04 rechecks, 2026-11-19 |
-| 25 Vitest, 24 corpus attempts, 15 Playwright checks; full gate 53.78 s                            | Measured local release result    | Stage 04 audit recheck, recorded environment, 2026-11-19   |
-| Zero axe violations in tested setup/review states                                                 | Qualified automated result       | axe-core 4.10.1; not conformance or native-user evidence   |
-| Local pass still routes to native review                                                          | Verified product behavior        | UI, types, exports, browser inspection                     |
-| Customer value, adoption, ROI, prevention, production reliability                                 | Not evidenced                    | Withheld from public claims                                |
-
-## What I would learn next
-
-1. Watch accessibility QA and frontend-platform practitioners author or adapt a
-   contract. The key unknown is whether the schema reduces real release-review
-   friction without duplicating existing tests.
-2. Run the synthetic cases through qualified native assistive-technology review and
-   compare the evidence, without treating correlation as proven in advance.
-3. Use that evidence to decide whether a CI adapter, native-provider integration,
-   or a smaller contract-authoring tool is the right next product step.
-
-## Interview version
-
-“I built StateChorus for accessibility QA engineers reviewing stateful AI interface
-changes. It replays a versioned turn contract, captures local DOM events, explains
-broken episodes, and exports evidence for native review. The hardest decision was
-limiting the provider to what it could actually observe; a local pass never becomes
-a screen-reader or WCAG pass. Independent verification caught two release blockers:
-the first implementation was deriving several ‘observations’ from fixture metadata,
-and the complete keyboard rerun later dropped focus to the document body. I repaired
-both and had fresh validators reproduce the full corpus and focus loop. The final
-audit ran 24 corpus attempts with all seven seeded failures detected, no fixed-control
-false finding, and deterministic output per fixture. Next I would validate contract
-authoring with practitioners and pair the same fixtures with qualified native
-assistive-technology review.”
+1. Test the capture schema with three structurally different AI interfaces.
+2. Run workflow interviews with accessibility QA and frontend platform engineers.
+3. Pair captured traces with qualified native assistive-technology review to learn
+   which local signals are useful predictors without turning correlation into a
+   conformance claim.
+4. Package the capture helper only after the adapter has survived those interface
+   variations.

@@ -19,10 +19,6 @@ sips -c 1000 1280 --cropOffset 2000 0 \
   "$source_root/desktop/fixed-review.png" \
   -o "$output_root/fixed-result.png" >/dev/null
 
-sips -c 1400 360 --cropOffset 3000 0 \
-  "$source_root/mobile/fixed-review-360x800.png" \
-  -o "$output_root/mobile-result.png" >/dev/null
-
 sips -c 3000 360 --cropOffset 4200 0 \
   "$source_root/mobile/fixed-review-360x800.png" \
   -o "$output_root/mobile-depth.png" >/dev/null
@@ -39,20 +35,20 @@ sips -c 800 1280 --cropOffset 0 0 \
   "$source_root/failure-states/inconclusive.png" \
   -o "$output_root/inconclusive-recovery.png" >/dev/null
 
-sips -c 160 1280 --cropOffset 760 0 \
+sips -c 470 1280 --cropOffset 25 0 \
   "$source_root/desktop/setup.png" \
-  -o "$output_root/social-synthetic-disclosure.png" >/dev/null
+  -o "$output_root/social-product-intro.png" >/dev/null
 
-sips -c 480 1280 --cropOffset 2000 0 \
+sips -c 170 1280 --cropOffset 2630 0 \
   "$source_root/desktop/fixed-review.png" \
-  -o "$output_root/social-fixed-result.png" >/dev/null
+  -o "$output_root/social-result-boundary.png" >/dev/null
 
 swift_cache="/private/tmp/statechorus-swift-module-cache"
 mkdir -p "$swift_cache"
 CLANG_MODULE_CACHE_PATH="$swift_cache" SWIFT_MODULE_CACHE_PATH="$swift_cache" \
 swift "$project_root/scripts/create-social-preview.swift" \
-  "$output_root/social-synthetic-disclosure.png" \
-  "$output_root/social-fixed-result.png" \
+  "$output_root/social-product-intro.png" \
+  "$output_root/social-result-boundary.png" \
   "$output_root/social-preview.png"
 
 printf 'Created StateChorus presentation assets in %s\n' "$output_root"

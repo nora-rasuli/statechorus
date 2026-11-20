@@ -21,16 +21,16 @@ export function SetupPanel({
       className="workbench-section setup-panel"
       aria-labelledby="setup-heading"
     >
-      <div className="section-kicker">01 / Set up</div>
+      <div className="section-kicker">Sample / Try the evaluator</div>
       <div className="section-heading-row">
         <div>
-          <h2 id="setup-heading">Review the synthetic release change</h2>
+          <h2 id="setup-heading">Try a bundled sample</h2>
           <p>
             Scenario <code>{SCENARIO.id}</code> · release{" "}
             <code>{SCENARIO.releaseId}</code>
           </p>
         </div>
-        <span className="synthetic-stamp">Synthetic data</span>
+        <span className="synthetic-stamp">Sample data</span>
       </div>
 
       <div className="disclosure" data-testid="disclosure">
@@ -48,6 +48,7 @@ export function SetupPanel({
       <div
         className="contract-strip"
         aria-label="Seven-state executable contract"
+        tabIndex={0}
       >
         {fixture.path.map((state, index) => (
           <span key={state} className="contract-state">

@@ -1,6 +1,6 @@
 {
   "name": "statechorus",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -14,8 +14,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "format": "prettier --check 'src/**/*.{ts,tsx,css}' 'tests/**/*.{ts,tsx}' 'scripts/**/*.ts' '*.{json,js,ts,html,yml}' '.github/**/*.yml'",
-    "format:write": "prettier --write 'src/**/*.{ts,tsx,css}' 'tests/**/*.{ts,tsx}' 'scripts/**/*.ts' '*.{json,js,ts,html,yml}' '.github/**/*.yml'",
+    "format": "prettier --check 'src/**/*.{ts,tsx,css}' 'tests/**/*.{ts,tsx}' 'scripts/**/*.ts' 'public/**/*.ts' '*.{json,js,ts,html,yml}' '.github/**/*.yml'",
+    "format:write": "prettier --write 'src/**/*.{ts,tsx,css}' 'tests/**/*.{ts,tsx}' 'scripts/**/*.ts' 'public/**/*.ts' '*.{json,js,ts,html,yml}' '.github/**/*.yml'",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -24,6 +24,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test:e2e": "playwright test",
+    "evidence:screenshots": "npm run build && UPDATE_EVIDENCE_SCREENSHOTS=1 playwright test tests/e2e/statechorus.spec.ts",
     "licenses": "node --import tsx scripts/license-inventory.ts",
     "claims": "node --import tsx scripts/claim-review.ts",
     "contrast": "node --import tsx scripts/contrast-audit.ts",

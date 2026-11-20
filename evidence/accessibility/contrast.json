@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-11-20T00:08:10.884Z",
+  "capturedAt": "2026-11-20T03:26:01.931Z",
   "method": "WCAG relative-luminance arithmetic against frozen CSS tokens",
   "scope": "Declared normal text and focus-indicator token pairs; not a conformance claim",
   "checks": [

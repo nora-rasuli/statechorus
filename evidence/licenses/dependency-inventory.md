@@ -1,6 +1,6 @@
 # Dependency license inventory
 
-Generated 2026-11-20T00:08:11.325Z from package-lock.json. Runtime, development, and transitive packages are included.
+Generated 2026-11-20T03:26:02.203Z from package-lock.json. Runtime, development, and transitive packages are included.
 
 | Package path | Version | Scope | License | Disposition |
 |---|---:|---|---|---|

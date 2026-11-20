@@ -1,4 +1,9 @@
-import { STATECHORUS_CONTRACT, validatePath } from "../domain/contract";
+import {
+  GOLDEN_PATH,
+  STATECHORUS_CONTRACT,
+  validatePath,
+} from "../domain/contract";
+import type { AiState } from "../domain/contract";
 import type {
   Finding,
   FindingKey,
@@ -155,6 +160,16 @@ export function evaluateRun(
     };
   }
 
+  return evaluateObservedEvents(rawEvents, events, episodes, diagnostics, true);
+}
+
+function evaluateObservedEvents(
+  rawEvents: readonly RawObservableEvent[],
+  events: readonly NormalizedEvent[],
+  episodes: readonly SemanticEpisode[],
+  diagnostics: readonly string[],
+  requireSyntheticFinalChecksum: boolean,
+): Evaluation {
   const findings: Finding[] = [];
   const streamMutations = events.filter(
     (event) =>
@@ -210,7 +225,9 @@ export function evaluateRun(
     finalTranscript.type !== "transcript_observation" ||
     !finalTranscript.present ||
     !finalTranscript.stable ||
-    finalTranscript.textChecksum !== `fnv1a64:${stableFinalChecksum()}`
+    !finalTranscript.textChecksum.startsWith("fnv1a64:") ||
+    (requireSyntheticFinalChecksum &&
+      finalTranscript.textChecksum !== `fnv1a64:${stableFinalChecksum()}`)
   ) {
     findings.push(
       finding(
@@ -245,6 +262,120 @@ export function evaluateRun(
     episodes,
     diagnostics: Object.freeze(diagnostics),
   });
+}
+
+export function evaluateImportedRun(
+  rawEvents: readonly RawObservableEvent[],
+): Evaluation {
+  const { events, errors } = normalizeEvents(rawEvents);
+  const episodes = reduceEpisodes(events);
+  const trajectoryErrors = validateImportedTrajectory(events);
+  const diagnostics = [...errors, ...trajectoryErrors];
+  if (diagnostics.length > 0) {
+    return {
+      result: "invalid_run",
+      resultCopy:
+        "Invalid run — the trace is incomplete or incoherent; repair the capture and import it again.",
+      findings: [],
+      rawEvents: Object.freeze([...rawEvents]),
+      normalizedEvents: events,
+      episodes,
+      diagnostics: Object.freeze(diagnostics),
+    };
+  }
+  return evaluateObservedEvents(
+    rawEvents,
+    events,
+    episodes,
+    diagnostics,
+    false,
+  );
+}
+
+function validateImportedTrajectory(
+  events: readonly NormalizedEvent[],
+): readonly string[] {
+  const errors: string[] = [];
+  const transitions = events.filter(
+    (event): event is Extract<NormalizedEvent, { type: "state_transition" }> =>
+      event.type === "state_transition",
+  );
+  const expectedStates = ["idle", ...GOLDEN_PATH] as const;
+  const expectedTransitions = expectedStates.slice(1).map((to, index) => ({
+    from: expectedStates[index]!,
+    to,
+  }));
+
+  if (transitions.length !== expectedTransitions.length) {
+    errors.push(
+      `Expected ${expectedTransitions.length} contract transitions; observed ${transitions.length}.`,
+    );
+  }
+  expectedTransitions.forEach((expected, index) => {
+    const observed = transitions[index];
+    if (!observed) return;
+    if (observed.from !== expected.from || observed.to !== expected.to)
+      errors.push(
+        `Transition ${index + 1} must be ${expected.from} -> ${expected.to}.`,
+      );
+    if (observed.state !== observed.to)
+      errors.push(
+        `Transition ${index + 1} event state must match its target ${observed.to}.`,
+      );
+  });
+
+  let currentState: AiState = "idle";
+  for (const event of events) {
+    if (event.type === "state_transition") {
+      if (event.from !== currentState)
+        errors.push(
+          `Transition at sequence ${event.sequence} starts from ${event.from}, expected ${currentState}.`,
+        );
+      currentState = event.to;
+      continue;
+    }
+    if (event.type !== "harness_event" && event.state !== currentState)
+      errors.push(
+        `Event ${event.sequence} declares ${event.state}, expected ${currentState}.`,
+      );
+  }
+  if (currentState !== "complete")
+    errors.push("The trace must reach the complete terminal state.");
+
+  const observedSemanticKeys = new Set(
+    events.flatMap((event) =>
+      event.type === "live_region_mutation" ? [event.semanticKey] : [],
+    ),
+  );
+  const semanticState = {
+    thinking: "thinking",
+    tool: "tool_call",
+    approval: "approval",
+    streaming: "streaming",
+    stalled: "stalled",
+    complete: "complete",
+  } as const;
+  for (const event of events) {
+    if (
+      event.type === "live_region_mutation" &&
+      event.state !== semanticState[event.semanticKey]
+    )
+      errors.push(
+        `${event.semanticKey} signal at sequence ${event.sequence} must occur in ${semanticState[event.semanticKey]}.`,
+      );
+  }
+  for (const key of [
+    "thinking",
+    "tool",
+    "approval",
+    "streaming",
+    "stalled",
+    "complete",
+  ] as const) {
+    if (!observedSemanticKeys.has(key))
+      errors.push(`Required ${key} observable signal is missing.`);
+  }
+  return Object.freeze(errors);
 }
 
 // Kept as a literal derived from the frozen scenario so browser and Node builds agree.

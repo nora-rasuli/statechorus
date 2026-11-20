@@ -2,7 +2,7 @@
   "evidenceSchemaVersion": "1.0.0",
   "app": {
     "name": "StateChorus",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "commit": "local-uncommitted"
   },
   "contract": {
@@ -14,6 +14,13 @@
     "id": "FIX-DEMO-BROKEN",
     "version": "1.0.0",
     "hash": "fnv1a64:d592f1b28e93f093"
+  },
+  "input": {
+    "kind": "sample_fixture",
+    "id": "FIX-DEMO-BROKEN",
+    "version": "1.0.0",
+    "hash": "fnv1a64:d592f1b28e93f093",
+    "label": "Guided broken fixture"
   },
   "scenario": {
     "id": "SCN-RELEASE-001",
@@ -49,11 +56,21 @@
     },
     "reducedMotion": false
   },
+  "analysisEnvironment": {
+    "browserName": "Chrome",
+    "browserVersion": "159.0.8154.6",
+    "os": "MacIntel",
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "reducedMotion": false
+  },
   "run": {
     "runId": "run-fix-demo-broken-001",
     "attemptId": "attempt-001",
-    "startedAt": "2026-11-20T00:07:50.743Z",
-    "completedAt": "2026-11-20T00:07:51.957Z",
+    "startedAt": "2026-11-20T03:25:42.023Z",
+    "completedAt": "2026-11-20T03:25:43.221Z",
     "wallClockMetadataOnly": true
   },
   "rawEvents": [
@@ -917,5 +934,5 @@
   "result": "contract_violation",
   "resultCopy": "3 local contract violations found.",
   "nativeVerificationRequirement": "Local browser evidence does not represent native screen-reader output, disabled-user experience, or WCAG conformance. Native assistive-technology review remains required.",
-  "integrityHash": "fnv1a64:3f442bf324ca2111"
+  "integrityHash": "fnv1a64:a5595b0f3177f687"
 }

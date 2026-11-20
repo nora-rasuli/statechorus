@@ -2,7 +2,7 @@
   "evidenceSchemaVersion": "1.0.0",
   "app": {
     "name": "StateChorus",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "commit": "local-uncommitted"
   },
   "contract": {
@@ -14,6 +14,13 @@
     "id": "FIX-DEMO-FIXED",
     "version": "1.0.0",
     "hash": "fnv1a64:430a8e75a0512f20"
+  },
+  "input": {
+    "kind": "sample_fixture",
+    "id": "FIX-DEMO-FIXED",
+    "version": "1.0.0",
+    "hash": "fnv1a64:430a8e75a0512f20",
+    "label": "Guided fixed fixture"
   },
   "scenario": {
     "id": "SCN-RELEASE-001",
@@ -49,11 +56,21 @@
     },
     "reducedMotion": false
   },
+  "analysisEnvironment": {
+    "browserName": "Chrome",
+    "browserVersion": "159.0.8154.6",
+    "os": "MacIntel",
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "reducedMotion": false
+  },
   "run": {
     "runId": "run-fix-demo-fixed-002",
     "attemptId": "attempt-002",
-    "startedAt": "2026-11-20T00:07:52.369Z",
-    "completedAt": "2026-11-20T00:07:52.885Z",
+    "startedAt": "2026-11-20T03:25:43.420Z",
+    "completedAt": "2026-11-20T03:25:43.936Z",
     "wallClockMetadataOnly": true
   },
   "rawEvents": [
@@ -619,5 +636,5 @@
   "result": "local_observable_pass_native_required",
   "resultCopy": "Local observable checks passed — native verification required.",
   "nativeVerificationRequirement": "Local browser evidence does not represent native screen-reader output, disabled-user experience, or WCAG conformance. Native assistive-technology review remains required.",
-  "integrityHash": "fnv1a64:ef780d5c370a83e9"
+  "integrityHash": "fnv1a64:28f157c7201e27d1"
 }

@@ -1,7 +1,14 @@
 {
-  "capturedAt": "2026-11-20T00:08:11.103Z",
+  "capturedAt": "2026-11-20T03:26:02.067Z",
   "productSourceExternalReferences": [],
   "forbiddenRuntimePatterns": [],
+  "localInputPaths": [
+    {
+      "file": "src/features/setup/TraceImportPanel.tsx",
+      "pattern": "local file input"
+    }
+  ],
+  "localInputBoundary": "FileReader/File.text browser-memory processing only; no fetch, XHR, WebSocket, server, database, or telemetry path.",
   "syntheticFixtureSource": "src/fixtures/corpus.ts",
   "frozenResearchSource": "research.md",
   "result": "pass",

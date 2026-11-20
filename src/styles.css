@@ -124,6 +124,7 @@ code {
 }
 .build-badge,
 .synthetic-stamp,
+.input-stamp,
 .authority-tag {
   padding: 0.35rem 0.6rem;
   border: 1px solid var(--line-strong);
@@ -133,6 +134,11 @@ code {
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+.input-stamp {
+  color: var(--accent-dark);
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 .status-region {
   position: absolute;
@@ -239,6 +245,46 @@ h2 {
   border-left: 4px solid var(--accent);
   background: var(--accent-soft);
 }
+.import-steps {
+  margin: 2rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  list-style: none;
+  counter-reset: import-step;
+}
+.import-steps li {
+  min-height: 120px;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  line-height: 1.5;
+  counter-increment: import-step;
+}
+.import-steps li::before {
+  content: "0" counter(import-step);
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--accent-dark);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-weight: 900;
+}
+.import-actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+}
+.import-actions label.button {
+  display: inline-flex;
+  align-items: center;
+}
+.file-control:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
 .disclosure p {
   margin: 0;
   line-height: 1.55;
@@ -251,6 +297,10 @@ h2 {
   overflow-x: auto;
   border: 1px solid var(--line);
   background: var(--paper);
+}
+.contract-strip:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
 }
 .contract-state {
   display: inline-flex;
@@ -752,6 +802,7 @@ summary {
     display: grid;
   }
   .fixture-choice,
+  .import-steps,
   .replay-grid {
     grid-template-columns: 1fr;
   }
@@ -798,7 +849,14 @@ summary {
     padding-block: 2.25rem;
   }
   .contract-strip {
-    margin-inline: -0.625rem;
+    margin-inline: 0;
+    display: grid;
+    overflow-x: auto;
+  }
+  .contract-state {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    white-space: normal;
   }
   .result-notice {
     display: grid;

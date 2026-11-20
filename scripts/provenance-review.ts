@@ -8,9 +8,9 @@ const forbiddenRuntimePatterns = [
   /XMLHttpRequest/,
   /WebSocket\s*\(/,
   /dangerouslySetInnerHTML/,
-  /<input[^>]+type=["']file/i,
 ];
 const findings: Array<{ file: string; pattern: string }> = [];
+const localInputPaths: Array<{ file: string; pattern: string }> = [];
 
 async function scan(directory: string): Promise<void> {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -25,6 +25,8 @@ async function scan(directory: string): Promise<void> {
         if (pattern.test(content))
           findings.push({ file, pattern: pattern.source });
       }
+      if (/<input[^>]+type=["']file/i.test(content))
+        localInputPaths.push({ file, pattern: "local file input" });
     }
   }
 }
@@ -34,6 +36,9 @@ const report = {
   capturedAt: new Date().toISOString(),
   productSourceExternalReferences: externalReferences,
   forbiddenRuntimePatterns: findings,
+  localInputPaths,
+  localInputBoundary:
+    "FileReader/File.text browser-memory processing only; no fetch, XHR, WebSocket, server, database, or telemetry path.",
   syntheticFixtureSource: "src/fixtures/corpus.ts",
   frozenResearchSource: "research.md",
   result:
@@ -51,5 +56,5 @@ if (report.result !== "pass")
     `Provenance/runtime boundary review failed: ${JSON.stringify(report)}`,
   );
 console.log(
-  "Provenance review passed: product source contains no external URL, data-egress API, file upload, or unsafe HTML path.",
+  "Provenance review passed: local file import is present with no external URL, data-egress API, or unsafe HTML path.",
 );
