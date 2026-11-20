@@ -8,7 +8,7 @@
 - **Timeline:** One-week independent build · November 2026
 - **Stack:** React, TypeScript, Vite, Vitest, Playwright, axe-core
 - **Project type:** Self-directed product concept using synthetic fixtures
-- **Links:** [Live demo](https://statechorus.vercel.app/demo?fixture=FIX-DEMO-BROKEN)
+- **Links:** [Live demo](https://statechorus-eta.vercel.app/demo?fixture=FIX-DEMO-BROKEN)
   · [Source](https://github.com/nora-rasuli/statechorus)
 
 ## A release-evidence workbench for AI interface states

@@ -2,13 +2,13 @@
 
 > StateChorus helps accessibility QA engineers replay an AI-interface state contract, diagnose browser-observable regressions, and carry evidence into native assistive-technology review.
 
-**Try it without an account:** [open the guided demo](https://statechorus.vercel.app/demo?fixture=FIX-DEMO-BROKEN).
+**Try it without an account:** [open the guided demo](https://statechorus-eta.vercel.app/demo?fixture=FIX-DEMO-BROKEN).
 The guided path starts with a deliberately broken
 synthetic release fixture and ends with its corrected equivalent. No API key,
 model, backend, or sign-in is required.
 
 **Status:** Public portfolio release. **Built:** November 2026. **Role:** Product
-design and frontend engineering. [Live demo](https://statechorus.vercel.app/demo?fixture=FIX-DEMO-BROKEN)
+design and frontend engineering. [Live demo](https://statechorus-eta.vercel.app/demo?fixture=FIX-DEMO-BROKEN)
 · [Source](https://github.com/nora-rasuli/statechorus)
 
 ![StateChorus corrected review showing the local-result and native-verification boundary](presentation-assets/fixed-result.png)

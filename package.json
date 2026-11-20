@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "homepage": "https://statechorus.vercel.app",
+  "homepage": "https://statechorus-eta.vercel.app",
   "repository": {
     "type": "git",
     "url": "https://github.com/nora-rasuli/statechorus.git"

@@ -12,7 +12,7 @@ StateChorus portfolio release.
 - **Topics:** `accessibility`, `ai-interfaces`, `react`, `typescript`,
   `playwright`, `testing`, `quality-assurance`, `human-in-the-loop`, `provenance`,
   `vite`
-- **Homepage/demo:** `https://statechorus.vercel.app`
+- **Homepage/demo:** `https://statechorus-eta.vercel.app`
 - **Repository URL:** `https://github.com/nora-rasuli/statechorus`
 - **Visibility:** Public
 
