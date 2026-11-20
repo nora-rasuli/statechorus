@@ -43,6 +43,7 @@ test.beforeAll(async () => {
     mkdir(resolve(evidenceRoot, "accessibility"), { recursive: true }),
     mkdir(resolve(evidenceRoot, "performance"), { recursive: true }),
     mkdir(resolve(evidenceRoot, "privacy"), { recursive: true }),
+    mkdir(resolve(evidenceRoot, "tests"), { recursive: true }),
   ]);
 });
 
