@@ -7,3 +7,5 @@ app/
 .DS_Store
 evidence/tests/*.json
 evidence/tests/*.txt
+.vercel/
+.env*
